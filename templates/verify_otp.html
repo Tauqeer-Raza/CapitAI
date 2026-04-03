@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block auth_content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-8 sm:px-6">
+    <div class="w-full max-w-[980px] grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+
+        <div class="premium-card rounded-[32px] p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-2xl premium-icon-box flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-violet-200"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Verify Email</h1>
+                        <p class="text-sm text-[#98a2b3]">Secure your account access</p>
+                    </div>
+                </div>
+
+                <p class="text-[11px] sm:text-xs uppercase tracking-[0.42em] text-[#8ea0b8] mb-3">OTP Verification</p>
+                <h2 class="text-[2rem] sm:text-[2.4rem] lg:text-[2.8rem] leading-tight font-bold tracking-tight max-w-xl">
+                    Confirm your email with the one-time code.
+                </h2>
+                <p class="mt-4 text-sm sm:text-base text-[#9ca3af] leading-7 max-w-xl">
+                    We sent an OTP to your email. Enter it below to activate your account and continue to the app.
+                </p>
+
+                <div class="mt-8 rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
+                    <p class="text-xs uppercase tracking-[0.28em] text-[#7f8a9d] mb-2">Verification Email</p>
+                    <p class="text-white font-semibold break-all">{{ email if email else 'Your email address' }}</p>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex items-center gap-3 pt-10">
+                <div class="premium-badge">
+                    <i data-lucide="mail-check" class="w-3.5 h-3.5"></i>
+                    <span>OTP Sent</span>
+                </div>
+                <div class="premium-badge">
+                    <i data-lucide="lock-keyhole" class="w-3.5 h-3.5"></i>
+                    <span>Protected Access</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="premium-card rounded-[32px] p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+            <div class="max-w-md w-full mx-auto">
+                <div class="mb-6">
+                    <p class="text-[11px] sm:text-xs uppercase tracking-[0.42em] text-[#8ea0b8] mb-3">Enter OTP</p>
+                    <h3 class="text-2xl sm:text-3xl font-bold tracking-tight">Verify your account</h3>
+                </div>
+
+                {% if error %}
+                <div class="mb-5 rounded-3xl border border-red-500/20 bg-red-500/10 px-4 py-4 text-sm text-red-200">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                {% if success %}
+                <div class="mb-5 rounded-3xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-4 text-sm text-emerald-200">
+                    {{ success }}
+                </div>
+                {% endif %}
+
+                <form method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-[#9ca3af] mb-2">One-Time Password</label>
+                        <input
+                            type="text"
+                            name="otp"
+                            maxlength="6"
+                            inputmode="numeric"
+                            class="premium-input tracking-[0.35em] text-center text-lg font-semibold"
+                            placeholder="••••••"
+                            required
+                        >
+                    </div>
+
+                    {% if email %}
+                    <input type="hidden" name="email" value="{{ email }}">
+                    {% endif %}
+
+                    <button type="submit" class="premium-primary-button w-full">Verify OTP</button>
+                </form>
+
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <a href="{{ url_for('register') }}" class="premium-muted-button w-full">Back to Register</a>
+                    {% if resend_url %}
+                    <a href="{{ resend_url }}" class="premium-secondary-button w-full">Resend OTP</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+lucide.createIcons();
+</script>
+{% endblock %}

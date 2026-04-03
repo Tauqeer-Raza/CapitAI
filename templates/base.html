@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>CapitAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="premium-app-shell text-white overflow-x-hidden">
+{% if session.get('user_id') %}
+<div class="min-h-screen">
+    <!-- Desktop Sidebar -->
+    <aside id="sidebar" class="hidden lg:flex fixed left-0 top-0 h-screen w-72 premium-sidebar border-r border-white/8 px-4 py-6 transition-all duration-300 overflow-hidden z-50">
+        <div class="flex flex-col h-full justify-between w-full">
+            <div>
+                <div id="sidebarTop" class="flex items-center justify-between mb-8 transition-all duration-300">
+                    <div class="flex items-center gap-3 whitespace-nowrap transition-all duration-300">
+                        <div class="w-11 h-11 rounded-2xl premium-icon-box flex items-center justify-center shadow-[0_10px_24px_rgba(124,58,237,0.22)]">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-violet-200"></i>
+                        </div>
+                        <div>
+                            <h1 id="brandText" class="text-2xl font-bold tracking-tight transition-all duration-300">CapitAI</h1>
+                            <p class="text-xs text-[#98a2b3]">Student Finance AI</p>
+                        </div>
+                    </div>
+                    <button id="sidebarToggleBtn" onclick="toggleSidebar()" class="shrink-0 px-4 py-3 rounded-2xl premium-soft-card border border-white/8 hover:bg-white/8 transition">
+                        <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <nav class="space-y-2.5">
+                    <a href="{{ url_for('dashboard') }}" class="sidebar-link premium-nav-link flex items-center gap-3 px-5 py-3.5 rounded-2xl transition">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-[#a5b4fc]"></i>
+                        <span class="link-text">Dashboard</span>
+                    </a>
+                    <a href="{{ url_for('analysis') }}" class="sidebar-link premium-nav-link flex items-center gap-3 px-5 py-3.5 rounded-2xl transition">
+                        <i data-lucide="chart-column-big" class="w-5 h-5 text-[#93c5fd]"></i>
+                        <span class="link-text">Analysis</span>
+                    </a>
+                    <a href="{{ url_for('profile') }}" class="sidebar-link premium-nav-link flex items-center gap-3 px-5 py-3.5 rounded-2xl transition">
+                        <i data-lucide="user-round" class="w-5 h-5 text-[#c4b5fd]"></i>
+                        <span class="link-text">Profile</span>
+                    </a>
+                    <a href="{{ url_for('dashboard') }}#voice-log" class="sidebar-link premium-nav-link flex items-center gap-3 px-5 py-3.5 rounded-2xl transition">
+                        <i data-lucide="mic" class="w-5 h-5 text-[#86efac]"></i>
+                        <span class="link-text">Voice Log</span>
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="sidebar-link flex items-center gap-3 px-5 py-3.5 rounded-2xl border border-red-500/10 bg-red-500/5 hover:bg-red-500/10 transition text-red-300">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                        <span class="link-text">Logout</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div id="sidebarFooter" class="rounded-2xl border border-white/8 premium-soft-card px-4 py-4 text-sm text-[#98a2b3] transition-all duration-300">
+                Mobile-first finance tracking with AI insights.
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Topbar -->
+    <header class="lg:hidden sticky top-0 z-40 premium-mobile-topbar border-b border-white/8">
+        <div class="px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 rounded-2xl premium-icon-box flex items-center justify-center shrink-0">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-violet-200"></i>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-lg font-semibold truncate">CapitAI</h1>
+                    <p class="text-xs text-[#98a2b3] truncate">Student finance AI app</p>
+                </div>
+            </div>
+            <a href="{{ url_for('logout') }}" class="px-4 py-2.5 rounded-2xl premium-soft-card border border-white/8 text-sm font-medium text-red-200 hover:bg-white/8 transition">
+                Logout
+            </a>
+        </div>
+    </header>
+
+    <main id="mainContent" class="transition-all duration-300 lg:ml-72">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-white/8 premium-bottom-nav">
+        <div class="grid grid-cols-3 gap-1 px-3 pt-2 pb-[max(10px,env(safe-area-inset-bottom))]">
+            <a href="{{ url_for('dashboard') }}" class="mobile-nav-item flex flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2.5 text-xs text-[#cbd5e1]">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('analysis') }}" class="mobile-nav-item flex flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2.5 text-xs text-[#cbd5e1]">
+                <i data-lucide="chart-column-big" class="w-4 h-4"></i>
+                <span>Analysis</span>
+            </a>
+            <a href="{{ url_for('profile') }}" class="mobile-nav-item flex flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2.5 text-xs text-[#cbd5e1]">
+                <i data-lucide="user-round" class="w-4 h-4"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+</div>
+{% else %}
+<main>{% block auth_content %}{% endblock %}</main>
+{% endif %}
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const brandText = document.getElementById('brandText');
+    const footer = document.getElementById('sidebarFooter');
+    const texts = document.querySelectorAll('.link-text');
+    const sidebarTop = document.getElementById('sidebarTop');
+    const links = document.querySelectorAll('.sidebar-link');
+    const mainContent = document.getElementById('mainContent');
+    const toggleIcon = document.querySelector('#sidebarToggleBtn i');
+
+    if (!sidebar || !mainContent) return;
+
+    const isCollapsed = sidebar.classList.contains('w-24');
+
+    if (isCollapsed) {
+        sidebar.classList.remove('w-24');
+        sidebar.classList.add('w-72');
+
+        mainContent.classList.remove('lg:ml-24');
+        mainContent.classList.add('lg:ml-72');
+
+        brandText.classList.remove('hidden');
+        footer.classList.remove('hidden');
+        texts.forEach(t => t.classList.remove('hidden'));
+
+        links.forEach(link => {
+            link.classList.remove('justify-center');
+            link.classList.add('gap-3', 'px-5');
+        });
+
+        sidebarTop.classList.remove('flex-col', 'items-center', 'gap-3');
+        sidebarTop.classList.add('flex-row', 'justify-between');
+        if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'panel-left-close');
+    } else {
+        sidebar.classList.remove('w-72');
+        sidebar.classList.add('w-24');
+
+        mainContent.classList.remove('lg:ml-72');
+        mainContent.classList.add('lg:ml-24');
+
+        brandText.classList.add('hidden');
+        footer.classList.add('hidden');
+        texts.forEach(t => t.classList.add('hidden'));
+
+        links.forEach(link => {
+            link.classList.remove('gap-3', 'px-5');
+            link.classList.add('justify-center');
+        });
+
+        sidebarTop.classList.remove('flex-row', 'justify-between');
+        sidebarTop.classList.add('flex-col', 'items-center', 'gap-3');
+        if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+    }
+
+    lucide.createIcons();
+}
+
+lucide.createIcons();
+</script>
+</body>
+</html>

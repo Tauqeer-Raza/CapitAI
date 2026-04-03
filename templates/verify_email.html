@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block auth_content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-8 sm:px-6">
+    <div class="w-full max-w-md bg-[#16181d] border border-[#2a2f38] p-5 sm:p-8 rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+        <div class="text-center mb-8">
+            <p class="text-sm uppercase tracking-[0.3em] text-[#9ca3af] mb-3">CapitAI</p>
+            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">Verify Email</h2>
+            <p class="text-[#9ca3af] mt-3">Enter the OTP sent to <span class="text-white">{{ email }}</span>.</p>
+        </div>
+        <form method="POST" class="space-y-4">
+            <input type="text" name="otp" maxlength="6" placeholder="6-digit OTP" class="w-full p-4 rounded-2xl bg-[#1c1f26] border border-[#2a2f38] text-white placeholder:text-[#9ca3af] outline-none focus:ring-2 focus:ring-[#3b82f6] text-center tracking-[0.5em]">
+            <button class="w-full bg-[#1c1f26] hover:bg-[#232833] border border-[#2a2f38] p-3.5 rounded-2xl font-semibold transition">Verify</button>
+            {% if error %}<p class="text-sm text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-xl mt-3 text-center">{{ error }}</p>{% endif %}
+            {% if success %}<p class="text-sm text-green-400 bg-green-500/10 border border-green-500/20 px-4 py-3 rounded-xl mt-3 text-center">{{ success }}</p>{% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

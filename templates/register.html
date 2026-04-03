@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block auth_content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-8 sm:px-6">
+    <div class="w-full max-w-[1180px] grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+
+        <div class="premium-card rounded-[32px] p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-2xl premium-icon-box flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-violet-200"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">CapitAI</h1>
+                        <p class="text-sm text-[#98a2b3]">Student finance AI app</p>
+                    </div>
+                </div>
+
+                <p class="text-[11px] sm:text-xs uppercase tracking-[0.42em] text-[#8ea0b8] mb-3">Create Account</p>
+                <h2 class="text-[2rem] sm:text-[2.5rem] lg:text-[3rem] leading-tight font-bold tracking-tight max-w-xl">
+                    Start tracking, scanning, and saving smarter.
+                </h2>
+                <p class="mt-4 text-sm sm:text-base text-[#9ca3af] leading-7 max-w-xl">
+                    Set your monthly budget, log expenses from phone, scan receipts, and unlock AI-powered behavior insights built for students.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
+                    <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
+                        <p class="text-sm font-semibold text-white">Budget guardrails</p>
+                        <p class="text-xs text-[#98a2b3] mt-2 leading-6">Stay within real financial limits with warnings and blocks.</p>
+                    </div>
+                    <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
+                        <p class="text-sm font-semibold text-white">Receipt + voice logging</p>
+                        <p class="text-xs text-[#98a2b3] mt-2 leading-6">Capture expenses faster on mobile with multiple input modes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex items-center gap-3 pt-10">
+                <div class="premium-badge">
+                    <i data-lucide="mail-check" class="w-3.5 h-3.5"></i>
+                    <span>Email Verification</span>
+                </div>
+                <div class="premium-badge">
+                    <i data-lucide="brain-circuit" class="w-3.5 h-3.5"></i>
+                    <span>AI Insights</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="premium-card rounded-[32px] p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+            <div class="max-w-md w-full mx-auto">
+                <div class="mb-6">
+                    <p class="text-[11px] sm:text-xs uppercase tracking-[0.42em] text-[#8ea0b8] mb-3">Register</p>
+                    <h3 class="text-2xl sm:text-3xl font-bold tracking-tight">Create your account</h3>
+                </div>
+
+                {% if error %}
+                <div class="mb-5 rounded-3xl border border-red-500/20 bg-red-500/10 px-4 py-4 text-sm text-red-200">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                {% if success %}
+                <div class="mb-5 rounded-3xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-4 text-sm text-emerald-200">
+                    {{ success }}
+                </div>
+                {% endif %}
+
+                <form method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-[#9ca3af] mb-2">Username</label>
+                        <input type="text" name="username" class="premium-input" placeholder="Choose a username" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-[#9ca3af] mb-2">Email</label>
+                        <input type="email" name="email" class="premium-input" placeholder="Enter a real email" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-[#9ca3af] mb-2">Password</label>
+                        <input type="password" name="password" class="premium-input" placeholder="Create a password" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-[#9ca3af] mb-2">Confirm Password</label>
+                        <input type="password" name="confirm_password" class="premium-input" placeholder="Re-enter password" required>
+                    </div>
+
+                    <button type="submit" class="premium-primary-button w-full">Create Account</button>
+                </form>
+
+                <div class="mt-6 text-sm text-[#9ca3af] text-center">
+                    Already have an account?
+                    <a href="{{ url_for('login') }}" class="text-violet-300 hover:text-violet-200 font-medium transition">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+lucide.createIcons();
+</script>
+{% endblock %}

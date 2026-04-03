@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="w-full max-w-[1200px] mx-auto px-4 sm:px-5 md:px-6 xl:px-8 pt-5 sm:pt-6 lg:pt-8 pb-28 lg:pb-8">
+    <div class="space-y-5 sm:space-y-6">
+
+        {% if success %}
+        <div class="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-emerald-200">
+            {{ success }}
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="rounded-3xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-200">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <section class="premium-card rounded-[28px] p-5 sm:p-6 lg:p-7">
+            <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                <div class="flex items-center gap-4 sm:gap-5 min-w-0">
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-[28px] premium-icon-box flex items-center justify-center shrink-0 shadow-[0_10px_28px_rgba(124,58,237,0.22)]">
+                        <i data-lucide="user-round" class="w-9 h-9 sm:w-10 sm:h-10 text-violet-200"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-[11px] sm:text-xs uppercase tracking-[0.42em] text-[#8ea0b8] mb-2">Profile</p>
+                        <h1 class="text-[1.8rem] sm:text-[2.2rem] lg:text-[2.6rem] leading-tight font-bold tracking-tight truncate">
+                            {{ user.username }}
+                        </h1>
+                        <p class="mt-1 text-sm sm:text-base text-[#9ca3af] break-all">
+                            {{ user.email }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ url_for('dashboard') }}" class="premium-chip-button">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{{ url_for('analysis') }}" class="premium-chip-button">
+                        <i data-lucide="chart-column-big" class="w-4 h-4"></i>
+                        <span>Analysis</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+            <div class="premium-stat-card">
+                <p class="premium-stat-label">Monthly Income</p>
+                <h3 class="premium-stat-value">₹ {{ user.monthly_income or 0 }}</h3>
+            </div>
+            <div class="premium-stat-card">
+                <p class="premium-stat-label">Savings Goal</p>
+                <h3 class="premium-stat-value">₹ {{ user.savings_goal or 0 }}</h3>
+            </div>
+            <div class="premium-stat-card">
+                <p class="premium-stat-label">Profile Status</p>
+                <h3 class="premium-stat-value text-[1.1rem] sm:text-[1.3rem]">Active</h3>
+            </div>
+            <div class="premium-stat-card">
+                <p class="premium-stat-label">Email Verified</p>
+                <h3 class="premium-stat-value text-[1.1rem] sm:text-[1.3rem]">
+                    {% if user.email_verified %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </h3>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 lg:gap-6">
+            <div class="xl:col-span-7">
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-5">
+                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Update Profile</h2>
+                        <div class="premium-badge">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+                            <span>Settings</span>
+                        </div>
+                    </div>
+
+                    <form method="POST" class="space-y-3.5">
+                        <input type="hidden" name="action" value="update_profile">
+
+                        <div>
+                            <label class="block text-sm text-[#9ca3af] mb-2">Username</label>
+                            <input type="text" name="username" value="{{ user.username }}" class="premium-input" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-[#9ca3af] mb-2">Email</label>
+                            <input type="email" name="email" value="{{ user.email }}" class="premium-input" required>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label class="block text-sm text-[#9ca3af] mb-2">Monthly Income</label>
+                                <input type="number" min="0" name="monthly_income" value="{{ user.monthly_income or '' }}" class="premium-input">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm text-[#9ca3af] mb-2">Savings Goal</label>
+                                <input type="number" min="0" name="savings_goal" value="{{ user.savings_goal or '' }}" class="premium-input">
+                            </div>
+                        </div>
+
+                        <button class="premium-primary-button w-full">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="xl:col-span-5 space-y-4 sm:space-y-5 lg:space-y-6">
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Security</h2>
+                    </div>
+
+                    <form method="POST" class="space-y-3.5">
+                        <input type="hidden" name="action" value="change_password">
+
+                        <div>
+                            <label class="block text-sm text-[#9ca3af] mb-2">Current Password</label>
+                            <input type="password" name="current_password" class="premium-input" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-[#9ca3af] mb-2">New Password</label>
+                            <input type="password" name="new_password" class="premium-input" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-[#9ca3af] mb-2">Confirm Password</label>
+                            <input type="password" name="confirm_password" class="premium-input" required>
+                        </div>
+
+                        <button class="premium-secondary-button w-full">Update Password</button>
+                    </form>
+                </div>
+
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Account Info</h2>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
+                            <p class="text-xs uppercase tracking-[0.28em] text-[#7f8a9d] mb-2">Username</p>
+                            <p class="text-white font-semibold break-all">{{ user.username }}</p>
+                        </div>
+
+                        <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
+                            <p class="text-xs uppercase tracking-[0.28em] text-[#7f8a9d] mb-2">Email</p>
+                            <p class="text-white font-semibold break-all">{{ user.email }}</p>
+                        </div>
+
+                        <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
+                            <p class="text-xs uppercase tracking-[0.28em] text-[#7f8a9d] mb-2">Verification</p>
+                            <p class="text-white font-semibold">
+                                {% if user.email_verified %}
+                                    Verified
+                                {% else %}
+                                    Pending Verification
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+lucide.createIcons();
+</script>
+{% endblock %}
