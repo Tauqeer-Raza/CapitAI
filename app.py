@@ -337,6 +337,9 @@ def dashboard():
                 error = "Future expense dates are not allowed."
             else:
                 user = get_user_profile(user_id)
+                if not user:
+                    session.clear()
+                    return redirect(url_for("login"))
                 logs = get_user_logs(user_id)
 
                 allowed, message = can_add_expense(amount, user.get("monthly_income", 0), logs)
@@ -363,6 +366,9 @@ def dashboard():
                 error = "Future expense dates are not allowed."
             else:
                 user = get_user_profile(user_id)
+                if not user:
+                    session.clear()
+                    return redirect(url_for("login"))
                 logs = get_user_logs(user_id)
 
                 allowed, message = can_add_expense(amount, user.get("monthly_income", 0), logs)
@@ -425,6 +431,9 @@ def dashboard():
                     error = "Image scan failed. Please try another image."
 
     user = get_user_profile(user_id)
+    if not user:
+        session.clear()
+        return redirect(url_for("login"))
     logs = get_user_logs(user_id)
     metrics = compute_dashboard_metrics(user, logs)
 
@@ -520,6 +529,9 @@ def profile():
             confirm_password = request.form.get("confirm_password", "")
 
             user = get_user_profile(user_id)
+            if not user:
+                session.clear()
+                return redirect(url_for("login"))
             valid = verify_user_credentials(user["email"], current_password)
 
             if not valid:
@@ -531,6 +543,9 @@ def profile():
                 success = "Password updated successfully."
 
     user = get_user_profile(user_id)
+    if not user:
+        session.clear()
+        return redirect(url_for("login"))
     return render_template("profile.html", user=user, error=error, success=success)
 
 
