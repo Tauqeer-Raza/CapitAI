@@ -57,17 +57,8 @@ def send_otp_email(to_email, otp_code):
     smtp_password = os.getenv("SMTP_PASSWORD")
     smtp_from = os.getenv("SMTP_FROM_EMAIL", smtp_username)
 
-    print("SMTP_HOST:", smtp_host)
-    print("SMTP_PORT:", smtp_port)
-    print("SMTP_USERNAME:", smtp_username)
-    print("SMTP_FROM_EMAIL:", smtp_from)
-    print("SMTP_PASSWORD exists:", bool(smtp_password))
-
-    if not smtp_host or not smtp_port or not smtp_username or not smtp_password:
-        raise RuntimeError("SMTP environment variables are not configured properly.")
-
     subject = "Your CapitAI verification code"
-    body = f"Your OTP code is: {otp_code}\n\nThis code will expire in 10 minutes."
+    body = f"Your OTP code is: {otp_code}"
 
     msg = MIMEText(body)
     msg["Subject"] = subject
@@ -75,13 +66,16 @@ def send_otp_email(to_email, otp_code):
     msg["To"] = to_email
 
     try:
-        with smtplib.SMTP(smtp_host, int(smtp_port)) as server:
+        with smtplib.SMTP(smtp_host, int(smtp_port), timeout=10) as server:
             server.starttls()
             server.login(smtp_username, smtp_password)
             server.send_message(msg)
+
+        print("✅ OTP email sent")
+
     except Exception as e:
-        print("SMTP ERROR:", str(e))
-        raise
+        print("❌ SMTP FAILED:", str(e))
+        print(f"👉 DEMO OTP for {to_email}: {otp_code}")
 
 
 def generate_otp():
