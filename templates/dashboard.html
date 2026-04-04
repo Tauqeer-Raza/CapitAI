@@ -2,491 +2,222 @@
 {% block content %}
 <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-5 md:px-6 xl:px-8 pt-5 sm:pt-6 lg:pt-8 pb-28 lg:pb-8">
     <div class="space-y-5 sm:space-y-6">
+        {% if error %}<div class="rounded-3xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-200">{{ error }}</div>{% endif %}
+        {% if success %}<div class="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-emerald-200">{{ success }}</div>{% endif %}
 
-        {% if error %}
-        <div class="rounded-3xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-200">
-            {{ error }}
-        </div>
-        {% endif %}
-
-        {% if success %}
-        <div class="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-emerald-200">
-            {{ success }}
-        </div>
-        {% endif %}
-
-        {% if metrics.warning_level == 'warning' %}
-        <div class="rounded-3xl border border-yellow-400/20 bg-yellow-400/10 px-5 py-4 text-yellow-100">
-            Warning: You have used more than 80% of your monthly budget. Spend carefully.
-        </div>
-        {% elif metrics.warning_level == 'danger' %}
-        <div class="rounded-3xl border border-orange-400/20 bg-orange-400/10 px-5 py-4 text-orange-100">
-            Alert: You are above 90% of your monthly budget. Only essential expenses should be added now.
-        </div>
-        {% elif metrics.warning_level == 'critical' %}
-        <div class="rounded-3xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-100">
-            Budget limit reached: Your monthly budget is exhausted. New spending should be blocked.
-        </div>
-        {% endif %}
-
-        {% if scan_preview %}
-        <div class="rounded-[28px] border border-amber-400/20 bg-amber-400/10 p-5 sm:p-6">
-            <div class="flex items-start justify-between gap-4 mb-4">
-                <div>
-                    <p class="text-[11px] uppercase tracking-[0.35em] text-amber-200/80 mb-2">Scan Preview</p>
-                    <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-white">Confirm scanned expense</h2>
-                </div>
-                <div class="premium-badge">
-                    <i data-lucide="scan-line" class="w-3.5 h-3.5"></i>
-                    <span>Review First</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-5">
-                <div class="rounded-3xl border border-white/8 bg-white/[0.04] px-4 py-4">
-                    <p class="text-xs uppercase tracking-[0.24em] text-[#94a3b8] mb-2">Amount</p>
-                    <p class="text-lg font-semibold text-white">₹ {{ scan_preview.amount }}</p>
-                </div>
-                <div class="rounded-3xl border border-white/8 bg-white/[0.04] px-4 py-4">
-                    <p class="text-xs uppercase tracking-[0.24em] text-[#94a3b8] mb-2">Category</p>
-                    <p class="text-lg font-semibold text-white">{{ scan_preview.category }}</p>
-                </div>
-                <div class="rounded-3xl border border-white/8 bg-white/[0.04] px-4 py-4">
-                    <p class="text-xs uppercase tracking-[0.24em] text-[#94a3b8] mb-2">Date</p>
-                    <p class="text-lg font-semibold text-white">{{ scan_preview.log_date }}</p>
-                </div>
-                <div class="rounded-3xl border border-white/8 bg-white/[0.04] px-4 py-4">
-                    <p class="text-xs uppercase tracking-[0.24em] text-[#94a3b8] mb-2">Note</p>
-                    <p class="text-lg font-semibold text-white truncate">{{ scan_preview.note }}</p>
-                </div>
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-3">
-                <form method="POST" class="w-full sm:w-auto">
-                    <input type="hidden" name="action" value="confirm_scanned_expense">
-                    <input type="hidden" name="amount" value="{{ scan_preview.amount }}">
-                    <input type="hidden" name="category" value="{{ scan_preview.category }}">
-                    <input type="hidden" name="log_date" value="{{ scan_preview.log_date }}">
-                    <input type="hidden" name="note" value="{{ scan_preview.note }}">
-                    <button class="premium-warning-button w-full">Confirm & Save</button>
-                </form>
-
-                <form method="POST" class="w-full sm:w-auto">
-                    <input type="hidden" name="action" value="discard_scanned_expense">
-                    <button class="premium-muted-button w-full">Discard</button>
-                </form>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Hero -->
-        <section class="premium-card rounded-[28px] p-5 sm:p-6 lg:p-7">
+        <section class="premium-card rounded-[28px] p-5 sm:p-6 lg:p-7 overflow-hidden">
             <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                 <div class="min-w-0">
                     <p class="text-[11px] sm:text-xs uppercase tracking-[0.42em] text-[#8ea0b8] mb-3">Dashboard</p>
-                    <h1 class="text-[1.9rem] sm:text-[2.3rem] lg:text-[3rem] leading-tight font-bold tracking-tight">
-                        Welcome back, {{ session.get('username', 'User') }}
-                    </h1>
-                    <p class="mt-2 text-sm sm:text-base text-[#9ca3af] max-w-2xl leading-7">
-                        Mobile-ready quick actions, budget guardrails, smarter logging, and AI-driven behavior insights.
-                    </p>
+                    <h1 class="text-[1.9rem] sm:text-[2.3rem] lg:text-[3rem] leading-tight font-bold tracking-tight">Welcome back, {{ session.get('username', 'User') }}</h1>
+                    <p class="mt-2 text-sm sm:text-base text-[#9ca3af] max-w-2xl leading-7">Track expenses, manage lending and borrowing, split bills with friends, and get real AI-driven financial guidance.</p>
                 </div>
-
                 <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-3">
-                    <a href="{{ url_for('analysis') }}" class="premium-chip-button">
-                        <i data-lucide="chart-column-big" class="w-4 h-4"></i>
-                        <span>Analysis</span>
-                    </a>
-                    <a href="#quick-log" class="premium-chip-button">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                        <span>Add Log</span>
-                    </a>
-                    <a href="#voice-log" class="premium-chip-button">
-                        <i data-lucide="mic" class="w-4 h-4"></i>
-                        <span>Voice</span>
-                    </a>
-                    <a href="#scan-log" class="premium-chip-button">
-                        <i data-lucide="scan-line" class="w-4 h-4"></i>
-                        <span>Scan</span>
-                    </a>
+                    <a href="#quick-log" class="premium-chip-button"><i data-lucide="plus-circle" class="w-4 h-4"></i><span>Add Log</span></a>
+                    <a href="#voice-log" class="premium-chip-button"><i data-lucide="mic" class="w-4 h-4"></i><span>Voice</span></a>
+                    <a href="#scan-log" class="premium-chip-button"><i data-lucide="scan-line" class="w-4 h-4"></i><span>Scan</span></a>
+                    <a href="{{ url_for('split_page') }}" class="premium-chip-button"><i data-lucide="users-round" class="w-4 h-4"></i><span>Split</span></a>
                 </div>
             </div>
         </section>
 
-        <!-- Metrics -->
         <section class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-            <div class="premium-stat-card">
-                <p class="premium-stat-label">Monthly Income</p>
-                <h3 class="premium-stat-value">₹ {{ metrics.monthly_income }}</h3>
-            </div>
-            <div class="premium-stat-card">
-                <p class="premium-stat-label">Monthly Spend</p>
-                <h3 class="premium-stat-value">₹ {{ metrics.monthly_spend }}</h3>
-            </div>
-            <div class="premium-stat-card">
-                <p class="premium-stat-label">Remaining Budget</p>
-                <h3 class="premium-stat-value">₹ {{ metrics.remaining_budget }}</h3>
-            </div>
-            <div class="premium-stat-card">
-                <p class="premium-stat-label">Budget Used</p>
-                <h3 class="premium-stat-value">{{ metrics.budget_used_percentage or '0' }}%</h3>
-            </div>
+            <div class="premium-stat-card premium-stat-income"><p class="premium-stat-label">Monthly Income</p><h3 class="premium-stat-value">₹ {{ metrics.monthly_income }}</h3><p class="premium-stat-subtext">Base income / allowance</p></div>
+            <div class="premium-stat-card premium-stat-spend"><p class="premium-stat-label">Monthly Spend</p><h3 class="premium-stat-value">₹ {{ metrics.monthly_spend }}</h3><p class="premium-stat-subtext">Expenses logged this month</p></div>
+            <div class="premium-stat-card premium-stat-remaining"><p class="premium-stat-label">Remaining Budget</p><h3 class="premium-stat-value">₹ {{ metrics.remaining_budget }}</h3><p class="premium-stat-subtext">After expenses and liabilities</p></div>
+            <div class="premium-stat-card premium-stat-budget"><p class="premium-stat-label">Budget Used</p><h3 class="premium-stat-value">{{ metrics.budget_used_percentage or '0' }}%</h3><p class="premium-stat-subtext">Monthly effective usage</p></div>
         </section>
 
-        <!-- Main Grid -->
-        <section class="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 lg:gap-6">
-            <!-- Left Column -->
-            <div class="xl:col-span-8 space-y-4 sm:space-y-5 lg:space-y-6">
+        <section class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+            <div class="premium-stat-card"><p class="premium-stat-label">Money Lent</p><h3 class="premium-stat-value">₹ {{ metrics.lent_pending or 0 }}</h3><p class="premium-stat-subtext">Expected back from others</p></div>
+            <div class="premium-stat-card"><p class="premium-stat-label">Money Borrowed</p><h3 class="premium-stat-value">₹ {{ metrics.borrowed_pending or 0 }}</h3><p class="premium-stat-subtext">Still payable by you</p></div>
+            <div class="premium-stat-card"><p class="premium-stat-label">Split Receivable</p><h3 class="premium-stat-value">₹ {{ metrics.split_receivable or 0 }}</h3><p class="premium-stat-subtext">Pending share recoveries</p></div>
+            <div class="premium-stat-card"><p class="premium-stat-label">Net Cash Position</p><h3 class="premium-stat-value">₹ {{ metrics.net_cash_position or 0 }}</h3><p class="premium-stat-subtext">Receivable minus borrowed</p></div>
+        </section>
 
-                <!-- Setup + Manual Log -->
+        <section class="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 lg:gap-6">
+            <div class="xl:col-span-8 space-y-4 sm:space-y-5 lg:space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
                     <div class="premium-card rounded-[28px] p-5 sm:p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Set Monthly Income</h2>
-                        </div>
+                        <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Set Monthly Income</h2><span class="premium-pill">Setup</span></div>
                         <form method="POST" class="space-y-3.5">
                             <input type="hidden" name="action" value="set_income">
-                            <input
-                                type="number"
-                                min="0"
-                                name="monthly_income"
-                                placeholder="Monthly income / allowance"
-                                value="{{ monthly_income }}"
-                                class="premium-input"
-                            >
-                            <input
-                                type="number"
-                                min="0"
-                                name="savings_goal"
-                                placeholder="Monthly savings goal"
-                                value="{{ savings_goal }}"
-                                class="premium-input"
-                            >
-                            <button class="premium-primary-button w-full">
-                                Save Setup
-                            </button>
+                            <input type="number" min="0" name="monthly_income" placeholder="Monthly income / allowance" value="{{ monthly_income }}" class="premium-input">
+                            <input type="number" min="0" name="savings_goal" placeholder="Monthly savings goal" value="{{ savings_goal }}" class="premium-input">
+                            <button class="premium-primary-button w-full">Save Setup</button>
                         </form>
                     </div>
 
                     <div id="quick-log" class="premium-card rounded-[28px] p-5 sm:p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Quick Manual Log</h2>
-                        </div>
+                        <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Quick Manual Log</h2><span class="premium-pill">Expense</span></div>
                         <form id="manualExpenseForm" method="POST" class="space-y-3.5">
                             <input type="hidden" name="action" value="add_expense">
                             <input type="number" step="0.01" min="0" name="amount" placeholder="Amount" class="premium-input" required>
                             <select name="category" class="premium-input premium-select" required>
-                                <option value="Food">Food</option>
-                                <option value="Travel">Travel</option>
-                                <option value="Shopping">Shopping</option>
-                                <option value="Other">Other</option>
+                                <option value="Food">Food</option><option value="Travel">Travel</option><option value="Shopping">Shopping</option><option value="Other">Other</option>
                             </select>
-                            <input type="date" name="log_date" max="{{ today }}" value="{{ today }}" class="premium-input" required>
-                            <input type="text" name="note" placeholder="Short note" class="premium-input">
-                            <button type="button" id="openManualConfirm" class="premium-secondary-button w-full">
-                                Review Before Saving
-                            </button>
+                            <input type="date" name="log_date" value="{{ today }}" max="{{ today }}" class="premium-input" required>
+                            <input type="text" name="note" placeholder="Note / merchant / reason" class="premium-input">
+                            <button class="premium-primary-button w-full">Save Expense</button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Voice + Scan -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
                     <div id="voice-log" class="premium-card rounded-[28px] p-5 sm:p-6">
-                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight mb-4">Voice Log</h2>
+                        <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Voice Log</h2><span class="premium-pill">Smart Input</span></div>
                         <form method="POST" class="space-y-3.5">
                             <input type="hidden" name="action" value="voice_log">
-                            <textarea
-                                id="voiceTranscript"
-                                name="voice_text"
-                                rows="5"
-                                placeholder="Example: I spent 150 on food yesterday"
-                                class="premium-textarea"
-                            ></textarea>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <button type="button" id="startListening" class="premium-muted-button w-full">
-                                    Start Voice Capture
-                                </button>
-                                <button class="premium-success-button w-full">
-                                    Save Voice Log
-                                </button>
-                            </div>
+                            <textarea id="voiceTranscript" name="voice_text" placeholder="Example: Spent 180 on lunch yesterday" class="premium-textarea"></textarea>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><button type="button" id="startListening" class="premium-secondary-button w-full">Start Voice Capture</button><button class="premium-primary-button w-full">Save Voice Log</button></div>
                         </form>
                     </div>
 
                     <div id="scan-log" class="premium-card rounded-[28px] p-5 sm:p-6">
-                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight mb-4">Receipt / Image Scan</h2>
+                        <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Scan Receipt</h2><span class="premium-pill">Gemini Vision</span></div>
                         <form method="POST" enctype="multipart/form-data" class="space-y-3.5">
                             <input type="hidden" name="action" value="scan_expense_image">
-
                             <label class="premium-upload-box">
                                 <input id="receiptImageInput" type="file" name="receipt_image" accept="image/*" capture="environment" class="hidden">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-400/25 flex items-center justify-center">
-                                        <i data-lucide="scan-line" class="w-5 h-5 text-amber-300"></i>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="text-sm font-medium text-white">Scan Receipt</p>
-                                        <p id="receiptFileName" class="text-xs text-[#98a2b3] truncate">Tap to choose image or open camera</p>
-                                    </div>
-                                </div>
+                                <div class="flex items-center gap-3"><div class="premium-icon-box w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="image-up" class="w-5 h-5"></i></div><div class="min-w-0"><p class="font-medium text-white">Upload receipt image</p><p id="receiptFileName" class="text-sm text-[#9ca3af] truncate">Tap to choose image or open camera</p></div></div>
                             </label>
-
-                            <button class="premium-warning-button w-full">
-                                Scan Image
-                            </button>
-
-                            <p class="text-xs text-[#8f9cb0] leading-6">
-                                On mobile, this can open the camera directly.
-                            </p>
+                            <button class="premium-warning-button w-full">Scan with AI</button>
                         </form>
+                    </div>
+                </div>
+
+                {% if scan_preview %}
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Scanned Preview</h2><span class="premium-pill">Review</span></div>
+                    <form method="POST" class="space-y-3.5">
+                        <input type="hidden" name="action" value="confirm_scanned_expense">
+                        <input type="number" step="0.01" name="amount" value="{{ scan_preview.amount }}" class="premium-input" required>
+                        <select name="category" class="premium-input premium-select"><option {% if scan_preview.category == 'Food' %}selected{% endif %}>Food</option><option {% if scan_preview.category == 'Travel' %}selected{% endif %}>Travel</option><option {% if scan_preview.category == 'Shopping' %}selected{% endif %}>Shopping</option><option {% if scan_preview.category == 'Other' %}selected{% endif %}>Other</option></select>
+                        <input type="date" name="log_date" value="{{ scan_preview.log_date }}" max="{{ today }}" class="premium-input" required>
+                        <input type="text" name="note" value="{{ scan_preview.note }}" class="premium-input">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button class="premium-primary-button w-full">Confirm & Save</button>
+                        </div>
+                    </form>
+                    <form method="POST" class="mt-3">
+                        <input type="hidden" name="action" value="discard_scanned_expense">
+                        <button class="premium-secondary-button w-full">Discard</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Recent Logs</h2><a href="{{ url_for('analysis') }}" class="premium-chip-button">See all</a></div>
+                    <div class="space-y-3">
+                        {% for log in metrics.recent_logs %}
+                        <div class="premium-list-row"><div><p class="font-semibold text-white">₹ {{ log.amount }} • {{ log.category }}</p><p class="text-sm text-[#9ca3af]">{{ log.note or 'No note' }}</p></div><div class="text-right"><p class="text-sm text-white">{{ log.log_date }}</p><p class="text-xs text-[#7f8a9d] uppercase">{{ log.source }}</p></div></div>
+                        {% else %}
+                        <div class="premium-empty-state">No expense logs yet. Add your first one above.</div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column -->
             <div class="xl:col-span-4 space-y-4 sm:space-y-5 lg:space-y-6">
                 <div class="premium-card rounded-[28px] p-5 sm:p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">AI Summary</h2>
-                        <div class="premium-badge">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                            <span>USP</span>
-                        </div>
-                    </div>
-                    <div class="text-sm sm:text-[15px] text-[#d6dbe4] leading-8">
-                        {% if metrics.insights and metrics.insights|length > 0 %}
-                            {{ metrics.insights[0] }}
-                        {% else %}
-                            Your AI summary will appear here after you start logging expenses.
-                        {% endif %}
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Cashflow Snapshot</h2><span class="premium-pill">Live</span></div>
+                    <div class="space-y-3">
+                        <div class="premium-list-row"><span>Weekly spend</span><strong>₹ {{ metrics.weekly_spend }}</strong></div>
+                        <div class="premium-list-row"><span>Today's spend</span><strong>₹ {{ metrics.today_spend }}</strong></div>
+                        <div class="premium-list-row"><span>Open loans</span><strong>{{ metrics.open_loans_count }}</strong></div>
+                        <div class="premium-list-row"><span>Pending split items</span><strong>{{ metrics.pending_split_items }}</strong></div>
+                        <div class="premium-list-row"><span>Savings goal</span><strong>₹ {{ savings_goal or 0 }}</strong></div>
                     </div>
                 </div>
 
                 <div class="premium-card rounded-[28px] p-5 sm:p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Recent Logs</h2>
-                        <a href="{{ url_for('analysis') }}" class="text-sm text-violet-300 hover:text-violet-200 transition">View all</a>
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">AI Insights</h2><span class="premium-pill">Gemini</span></div>
+                    <div class="space-y-3">
+                        {% for insight in metrics.insights %}
+                        <div class="premium-insight-box">{{ insight }}</div>
+                        {% endfor %}
                     </div>
+                </div>
 
-                    <div class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-                        {% if metrics.recent_logs %}
-                            {% for item in metrics.recent_logs %}
-                            <div class="premium-log-card">
-                                <div class="min-w-0">
-                                    <p class="font-semibold text-white truncate">{{ item.note or 'Expense Log' }}</p>
-                                    <p class="text-xs sm:text-sm text-[#9ca3af] mt-1">
-                                        {{ item.category }} · {{ item.log_date }} · {{ item.source|title }}
-                                    </p>
-                                </div>
-                                <div class="text-lg sm:text-xl font-bold text-white whitespace-nowrap">₹ {{ item.amount }}</div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4 text-sm text-[#9ca3af]">
-                                No logs yet. Add your first daily expense to activate the dashboard.
-                            </div>
-                        {% endif %}
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">AI Chat</h2><span class="premium-pill">Assistant</span></div>
+                    <div id="chatMessages" class="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+                        <div class="chat-bubble ai">Ask about your budget, spending, or how lending and borrowing affect your month.</div>
                     </div>
+                    <div class="mt-4 flex gap-3">
+                        <input id="chatInput" type="text" class="premium-input flex-1" placeholder="Ask something smart...">
+                        <button id="sendChatBtn" class="premium-primary-button shrink-0">Send</button>
+                    </div>
+                    <p id="chatStatus" class="mt-3 text-sm text-[#8ea0b8]"></p>
                 </div>
             </div>
         </section>
     </div>
 </div>
 
-<!-- Manual Confirmation Modal -->
-<div id="manualConfirmModal" class="hidden fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm px-4">
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="w-full max-w-lg premium-card rounded-[28px] p-5 sm:p-6">
-            <div class="flex items-center justify-between mb-5">
-                <div>
-                    <p class="text-[11px] uppercase tracking-[0.32em] text-[#8ea0b8] mb-2">Confirm Entry</p>
-                    <h3 class="text-xl sm:text-2xl font-semibold text-white">Review expense details</h3>
-                </div>
-                <button id="closeManualModal" class="text-[#9ca3af] hover:text-white text-2xl leading-none">×</button>
-            </div>
-
-            <div class="space-y-3 mb-5">
-                <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
-                    <p class="text-xs uppercase tracking-[0.24em] text-[#94a3b8] mb-2">Amount</p>
-                    <p id="confirmAmount" class="text-lg font-semibold text-white">—</p>
-                </div>
-                <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
-                    <p class="text-xs uppercase tracking-[0.24em] text-[#94a3b8] mb-2">Category</p>
-                    <p id="confirmCategory" class="text-lg font-semibold text-white">—</p>
-                </div>
-                <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
-                    <p class="text-xs uppercase tracking-[0.24em] text-[#94a3b8] mb-2">Date</p>
-                    <p id="confirmDate" class="text-lg font-semibold text-white">—</p>
-                </div>
-                <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
-                    <p class="text-xs uppercase tracking-[0.24em] text-[#94a3b8] mb-2">Note</p>
-                    <p id="confirmNote" class="text-lg font-semibold text-white">—</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button id="editManualEntry" class="premium-muted-button w-full">Edit</button>
-                <button id="submitManualEntry" class="premium-primary-button w-full">Confirm & Save</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Chat -->
-<button id="chatToggle" class="premium-chat-fab">
-    <i data-lucide="messages-square" class="w-6 h-6 sm:w-7 sm:h-7"></i>
-</button>
-
-<div id="chatWidget" class="premium-chat-widget hidden">
-    <div class="flex items-center justify-between border-b border-white/8 px-4 sm:px-5 py-4 bg-white/[0.04]">
-        <div>
-            <h3 class="text-white font-semibold text-base sm:text-lg">AI Coach</h3>
-            <p class="text-xs text-[#9ca3af]">Ask about savings, spending, or habits</p>
-        </div>
-        <button id="closeChat" class="text-[#9ca3af] hover:text-white text-xl leading-none">×</button>
-    </div>
-
-    <div id="chatMessages" class="h-[260px] sm:h-[320px] overflow-y-auto px-4 py-4 space-y-3 bg-transparent">
-        <div class="flex justify-start">
-            <div class="max-w-[85%] rounded-2xl bg-white/[0.04] border border-white/8 px-4 py-3 text-sm text-[#e5e7eb]">
-                Hi, I’m your AI finance coach. Ask me how to improve your savings or understand your weekly spending pattern.
-            </div>
-        </div>
-    </div>
-
-    <div class="border-t border-white/8 bg-white/[0.03] p-3">
-        <div class="flex items-center gap-2">
-            <input id="chatInput" type="text" placeholder="Type your message..." class="premium-chat-input">
-            <button id="sendChatBtn" class="premium-send-button">Send</button>
-        </div>
-    </div>
-</div>
-
 <script>
-const receiptInput = document.getElementById('receiptImageInput');
+const receiptImageInput = document.getElementById('receiptImageInput');
 const receiptFileName = document.getElementById('receiptFileName');
-receiptInput?.addEventListener('change', () => {
-    if (receiptInput.files && receiptInput.files[0]) {
-        receiptFileName.textContent = receiptInput.files[0].name;
-    } else {
-        receiptFileName.textContent = 'Tap to choose image or open camera';
-    }
-});
+if (receiptImageInput) {
+    receiptImageInput.addEventListener('change', () => {
+        receiptFileName.textContent = receiptImageInput.files?.[0]?.name || 'Tap to choose image or open camera';
+    });
+}
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const transcriptBox = document.getElementById('voiceTranscript');
-const startListeningBtn = document.getElementById('startListening');
-
-if (SpeechRecognition && startListeningBtn) {
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'en-IN';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    startListeningBtn.addEventListener('click', () => {
-        startListeningBtn.textContent = 'Listening...';
+const startListening = document.getElementById('startListening');
+const voiceTranscript = document.getElementById('voiceTranscript');
+if (startListening && voiceTranscript) {
+    startListening.addEventListener('click', () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert('Voice recognition is not supported in this browser.');
+            return;
+        }
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-IN';
+        recognition.onresult = (event) => {
+            voiceTranscript.value = event.results[0][0].transcript;
+        };
         recognition.start();
     });
-
-    recognition.addEventListener('result', (event) => {
-        transcriptBox.value = event.results[0][0].transcript;
-        startListeningBtn.textContent = 'Start Voice Capture';
-    });
-
-    recognition.addEventListener('end', () => startListeningBtn.textContent = 'Start Voice Capture');
-    recognition.addEventListener('error', () => startListeningBtn.textContent = 'Start Voice Capture');
-} else if (startListeningBtn) {
-    startListeningBtn.disabled = true;
-    startListeningBtn.textContent = 'Voice capture not supported';
-    startListeningBtn.classList.add('opacity-60','cursor-not-allowed');
 }
 
-const manualForm = document.getElementById('manualExpenseForm');
-const manualModal = document.getElementById('manualConfirmModal');
-const openManualConfirm = document.getElementById('openManualConfirm');
-const closeManualModal = document.getElementById('closeManualModal');
-const editManualEntry = document.getElementById('editManualEntry');
-const submitManualEntry = document.getElementById('submitManualEntry');
-
-const confirmAmount = document.getElementById('confirmAmount');
-const confirmCategory = document.getElementById('confirmCategory');
-const confirmDate = document.getElementById('confirmDate');
-const confirmNote = document.getElementById('confirmNote');
-
-openManualConfirm?.addEventListener('click', () => {
-    const amount = manualForm.querySelector('input[name="amount"]').value.trim();
-    const category = manualForm.querySelector('select[name="category"]').value;
-    const logDate = manualForm.querySelector('input[name="log_date"]').value;
-    const note = manualForm.querySelector('input[name="note"]').value.trim();
-
-    if (!amount || !category || !logDate) {
-        alert('Please fill amount, category, and date first.');
-        return;
-    }
-
-    confirmAmount.textContent = `₹ ${amount}`;
-    confirmCategory.textContent = category;
-    confirmDate.textContent = logDate;
-    confirmNote.textContent = note || 'No note';
-    manualModal.classList.remove('hidden');
-});
-
-closeManualModal?.addEventListener('click', () => manualModal.classList.add('hidden'));
-editManualEntry?.addEventListener('click', () => manualModal.classList.add('hidden'));
-submitManualEntry?.addEventListener('click', () => manualForm.submit());
-
-const chatToggle = document.getElementById('chatToggle');
-const chatWidget = document.getElementById('chatWidget');
-const closeChat = document.getElementById('closeChat');
-const chatMessages = document.getElementById('chatMessages');
 const chatInput = document.getElementById('chatInput');
 const sendChatBtn = document.getElementById('sendChatBtn');
-
-chatToggle?.addEventListener('click', () => chatWidget.classList.toggle('hidden'));
-closeChat?.addEventListener('click', () => chatWidget.classList.add('hidden'));
-
-function appendMessage(sender, text) {
-    const wrapper = document.createElement('div');
-    wrapper.className = sender === 'You' ? 'flex justify-end' : 'flex justify-start';
-
+const chatMessages = document.getElementById('chatMessages');
+const chatStatus = document.getElementById('chatStatus');
+function addChatBubble(text, type) {
     const bubble = document.createElement('div');
-    bubble.className = sender === 'You'
-        ? 'max-w-[85%] rounded-2xl bg-violet-600 px-4 py-3 text-sm text-white'
-        : 'max-w-[85%] rounded-2xl bg-white/[0.04] border border-white/8 px-4 py-3 text-sm text-[#e5e7eb] whitespace-pre-wrap';
-
+    bubble.className = `chat-bubble ${type}`;
     bubble.textContent = text;
-    wrapper.appendChild(bubble);
-    chatMessages.appendChild(wrapper);
+    chatMessages.appendChild(bubble);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
-async function sendMessage() {
-    const message = chatInput.value.trim();
+async function sendChatMessage() {
+    const message = (chatInput.value || '').trim();
     if (!message) return;
-
-    appendMessage('You', message);
+    addChatBubble(message, 'user');
     chatInput.value = '';
-
+    chatStatus.textContent = 'Thinking...';
+    sendChatBtn.disabled = true;
     try {
-        const response = await fetch('/chatbot', {
+        const response = await fetch("{{ url_for('chatbot') }}", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message })
         });
-
         const data = await response.json();
-        appendMessage('AI', data.reply || 'No reply received.');
+        addChatBubble(data.reply || 'I could not generate a reply right now.', 'ai');
+        chatStatus.textContent = '';
     } catch (error) {
-        appendMessage('AI', 'Something went wrong while contacting the AI service.');
+        addChatBubble('Something went wrong while contacting the AI service.', 'ai');
+        chatStatus.textContent = 'AI request failed.';
+    } finally {
+        sendChatBtn.disabled = false;
     }
 }
-
-sendChatBtn?.addEventListener('click', sendMessage);
-chatInput?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
-});
-
+if (sendChatBtn) sendChatBtn.addEventListener('click', sendChatMessage);
+if (chatInput) chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 lucide.createIcons();
 </script>
 {% endblock %}

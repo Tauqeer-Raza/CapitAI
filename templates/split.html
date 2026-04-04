@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="w-full max-w-[1600px] mx-auto px-4 sm:px-5 md:px-6 xl:px-8 pt-5 sm:pt-6 lg:pt-8 pb-28 lg:pb-8">
+    <div class="space-y-5 sm:space-y-6">
+        {% if error %}<div class="rounded-3xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-200">{{ error }}</div>{% endif %}
+        {% if success %}<div class="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-emerald-200">{{ success }}</div>{% endif %}
+
+        <section class="premium-card rounded-[28px] p-5 sm:p-6 lg:p-7">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                    <p class="text-[11px] sm:text-xs uppercase tracking-[0.42em] text-[#8ea0b8] mb-3">Split & Loans</p>
+                    <h1 class="text-[1.9rem] sm:text-[2.3rem] lg:text-[3rem] leading-tight font-bold tracking-tight">Manage friends, bill splits, lending, and borrowing.</h1>
+                    <p class="mt-2 text-sm sm:text-base text-[#9ca3af] max-w-2xl leading-7">Every lent amount, borrowed amount, and pending split recovery is tracked so your dashboard stays financially honest.</p>
+                </div>
+                <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 min-w-full lg:min-w-[480px]">
+                    <div class="premium-stat-card"><p class="premium-stat-label">Lent</p><h3 class="premium-stat-value">₹ {{ cashflow.lent_pending }}</h3></div>
+                    <div class="premium-stat-card"><p class="premium-stat-label">Borrowed</p><h3 class="premium-stat-value">₹ {{ cashflow.borrowed_pending }}</h3></div>
+                    <div class="premium-stat-card"><p class="premium-stat-label">Split Due Back</p><h3 class="premium-stat-value">₹ {{ cashflow.split_receivable }}</h3></div>
+                    <div class="premium-stat-card"><p class="premium-stat-label">Net</p><h3 class="premium-stat-value">₹ {{ cashflow.net_cash_position }}</h3></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 lg:gap-6">
+            <div class="xl:col-span-4 space-y-4 sm:space-y-5 lg:space-y-6">
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Add Friend</h2><span class="premium-pill">Contacts</span></div>
+                    <form method="POST" class="space-y-3.5">
+                        <input type="hidden" name="action" value="add_friend">
+                        <input type="text" name="name" class="premium-input" placeholder="Friend name" required>
+                        <input type="email" name="email" class="premium-input" placeholder="Email (optional)">
+                        <input type="text" name="phone" class="premium-input" placeholder="Phone (optional)">
+                        <button class="premium-primary-button w-full">Add Friend</button>
+                    </form>
+                </div>
+
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Lend / Borrow</h2><span class="premium-pill">Cashflow</span></div>
+                    <form method="POST" class="space-y-3.5">
+                        <input type="hidden" name="action" value="add_loan">
+                        <select name="friend_id" class="premium-input premium-select">
+                            <option value="">Select friend (optional)</option>
+                            {% for friend in friends %}<option value="{{ friend.id }}">{{ friend.name }}</option>{% endfor %}
+                        </select>
+                        <input type="text" name="person_name" class="premium-input" placeholder="Person name if not in friend list">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <select name="loan_type" class="premium-input premium-select"><option value="lent">I lent money</option><option value="borrowed">I borrowed money</option></select>
+                            <input type="number" step="0.01" min="0" name="amount" class="premium-input" placeholder="Amount" required>
+                        </div>
+                        <input type="date" name="loan_date" value="{{ today }}" max="{{ today }}" class="premium-input" required>
+                        <input type="text" name="note" class="premium-input" placeholder="Note / reason">
+                        <button class="premium-primary-button w-full">Save Loan Entry</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="xl:col-span-8 space-y-4 sm:space-y-5 lg:space-y-6">
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Create Split Bill</h2><span class="premium-pill">Group Expense</span></div>
+                    <form method="POST" class="space-y-3.5">
+                        <input type="hidden" name="action" value="create_split">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+                            <input type="text" name="title" class="premium-input" placeholder="Bill title (Dinner, Trip, Cab...)" required>
+                            <input type="number" step="0.01" min="0" name="total_amount" class="premium-input" placeholder="Total amount" required>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
+                            <select name="paid_by" class="premium-input premium-select"><option value="you">You paid</option><option value="someone_else">Someone else paid</option></select>
+                            <input type="date" name="bill_date" value="{{ today }}" max="{{ today }}" class="premium-input" required>
+                            <input type="text" name="note" class="premium-input" placeholder="Optional note">
+                        </div>
+
+                        <div class="space-y-3" id="splitMembersWrap">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 split-member-row">
+                                <div class="md:col-span-5"><select name="member_friend_id[]" class="premium-input premium-select member-friend-select"><option value="">Choose friend</option>{% for friend in friends %}<option value="{{ friend.id }}">{{ friend.name }}</option>{% endfor %}</select></div>
+                                <div class="md:col-span-4"><input type="text" name="member_name[]" class="premium-input member-name-input" placeholder="Or type participant name"></div>
+                                <div class="md:col-span-3"><input type="number" step="0.01" min="0" name="member_share[]" class="premium-input" placeholder="Share amount"></div>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            <button type="button" id="addMemberRow" class="premium-secondary-button">Add Participant</button>
+                            <button class="premium-primary-button">Create Split</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="grid grid-cols-1 2xl:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
+                    <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                        <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Friends</h2><span class="premium-pill">{{ friends|length }}</span></div>
+                        <div class="space-y-3">
+                            {% for friend in friends %}
+                            <div class="premium-list-row"><div><p class="font-semibold text-white">{{ friend.name }}</p><p class="text-sm text-[#9ca3af]">{{ friend.email or friend.phone or 'No extra details' }}</p></div></div>
+                            {% else %}
+                            <div class="premium-empty-state">No friends added yet.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                        <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Loan History</h2><span class="premium-pill">{{ loans|length }}</span></div>
+                        <div class="space-y-3">
+                            {% for loan in loans %}
+                            <div class="premium-list-row flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="font-semibold text-white">{{ loan.person_name }} • ₹ {{ loan.amount }}</p>
+                                    <p class="text-sm text-[#9ca3af]">{{ loan.loan_type|capitalize }} • {{ loan.loan_date }}{% if loan.note %} • {{ loan.note }}{% endif %}</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="premium-status {% if loan.status == 'settled' %}is-settled{% endif %}">{{ loan.status|capitalize }}</span>
+                                    {% if loan.status == 'open' %}
+                                    <form method="POST"><input type="hidden" name="action" value="settle_loan"><input type="hidden" name="loan_id" value="{{ loan.id }}"><button class="premium-secondary-button">Mark Settled</button></form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="premium-empty-state">No lend or borrow entries yet.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="premium-card rounded-[28px] p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Split Bills</h2><span class="premium-pill">{{ split_bills|length }}</span></div>
+                    <div class="space-y-4">
+                        {% for bill in split_bills %}
+                        <div class="rounded-3xl border border-white/8 bg-white/[0.03] p-4 sm:p-5">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
+                                <div>
+                                    <p class="font-semibold text-white text-lg">{{ bill.title }} • ₹ {{ bill.total_amount }}</p>
+                                    <p class="text-sm text-[#9ca3af]">{{ bill.bill_date }} • Paid by {% if bill.paid_by == 'you' %}you{% else %}someone else{% endif %}{% if bill.note %} • {{ bill.note }}{% endif %}</p>
+                                </div>
+                                <div class="text-sm text-[#cbd5e1]">Pending: {{ bill.pending_count }} people • ₹ {{ bill.pending_amount }}</div>
+                            </div>
+                            <div class="space-y-3">
+                                {% for member in bill.members %}
+                                <div class="premium-list-row flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                    <div><p class="font-semibold text-white">{{ member.person_name }}</p><p class="text-sm text-[#9ca3af]">Share: ₹ {{ member.share_amount }}</p></div>
+                                    <div class="flex items-center gap-3"><span class="premium-status {% if member.status == 'settled' %}is-settled{% endif %}">{{ member.status|capitalize }}</span>{% if member.status == 'pending' %}<form method="POST"><input type="hidden" name="action" value="settle_split_member"><input type="hidden" name="member_id" value="{{ member.id }}"><button class="premium-secondary-button">Mark Paid</button></form>{% endif %}</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="premium-empty-state">No split bills yet.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+const addMemberRowBtn = document.getElementById('addMemberRow');
+const splitMembersWrap = document.getElementById('splitMembersWrap');
+if (addMemberRowBtn && splitMembersWrap) {
+    addMemberRowBtn.addEventListener('click', () => {
+        const firstRow = splitMembersWrap.querySelector('.split-member-row');
+        const clone = firstRow.cloneNode(true);
+        clone.querySelectorAll('input').forEach(input => input.value = '');
+        clone.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        splitMembersWrap.appendChild(clone);
+    });
+}
+lucide.createIcons();
+</script>
+{% endblock %}

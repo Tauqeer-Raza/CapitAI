@@ -2,313 +2,103 @@
 {% block content %}
 <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-5 md:px-6 xl:px-8 pt-5 sm:pt-6 lg:pt-8 pb-28 lg:pb-8">
     <div class="space-y-5 sm:space-y-6">
-
         <section class="premium-card rounded-[28px] p-5 sm:p-6 lg:p-7">
             <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                 <div class="min-w-0">
                     <p class="text-[11px] sm:text-xs uppercase tracking-[0.42em] text-[#8ea0b8] mb-3">Analysis</p>
-                    <h1 class="text-[1.8rem] sm:text-[2.2rem] lg:text-[2.8rem] leading-tight font-bold tracking-tight">
-                        Smart Spending Insights
-                    </h1>
-                    <p class="mt-2 text-sm sm:text-base text-[#9ca3af] max-w-2xl leading-7">
-                        Filter logs, study spending trends, and understand your financial patterns across date ranges.
-                    </p>
+                    <h1 class="text-[1.8rem] sm:text-[2.2rem] lg:text-[2.8rem] leading-tight font-bold tracking-tight">Smart Spending Insights</h1>
+                    <p class="mt-2 text-sm sm:text-base text-[#9ca3af] max-w-2xl leading-7">Filter logs, study trends, and understand how your expense behavior changes across time and categories.</p>
                 </div>
-
                 <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-3">
-                    <a href="{{ url_for('dashboard') }}" class="premium-chip-button">
-                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="#filtersSection" class="premium-chip-button">
-                        <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
-                        <span>Filters</span>
-                    </a>
-                    <a href="#logsSection" class="premium-chip-button">
-                        <i data-lucide="scroll-text" class="w-4 h-4"></i>
-                        <span>Logs</span>
-                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="premium-chip-button"><i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>Dashboard</span></a>
+                    <a href="#filtersSection" class="premium-chip-button"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i><span>Filters</span></a>
+                    <a href="#logsSection" class="premium-chip-button"><i data-lucide="scroll-text" class="w-4 h-4"></i><span>Logs</span></a>
                 </div>
             </div>
-        </section>
-
-        <!-- Mobile quick chips -->
-        <section class="premium-card rounded-[28px] p-4 sm:hidden">
-            <p class="text-[11px] uppercase tracking-[0.32em] text-[#8ea0b8] mb-3">Quick Filters</p>
-            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                <a href="{{ url_for('analysis') }}" class="premium-chip-button whitespace-nowrap">All</a>
-                <a href="{{ url_for('analysis', category='Food') }}" class="premium-chip-button whitespace-nowrap">Food</a>
-                <a href="{{ url_for('analysis', category='Travel') }}" class="premium-chip-button whitespace-nowrap">Travel</a>
-                <a href="{{ url_for('analysis', category='Shopping') }}" class="premium-chip-button whitespace-nowrap">Shopping</a>
-                <a href="{{ url_for('analysis', source='manual') }}" class="premium-chip-button whitespace-nowrap">Manual</a>
-                <a href="{{ url_for('analysis', source='voice') }}" class="premium-chip-button whitespace-nowrap">Voice</a>
-                <a href="{{ url_for('analysis', source='image') }}" class="premium-chip-button whitespace-nowrap">Image</a>
-            </div>
-        </section>
-
-        <section id="filtersSection" class="premium-card rounded-[28px] p-5 sm:p-6">
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Filters</h2>
-                <div class="premium-badge">
-                    <i data-lucide="filter" class="w-3.5 h-3.5"></i>
-                    <span>Live View</span>
-                </div>
-            </div>
-
-            <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3.5">
-                <div>
-                    <label class="block text-sm text-[#9ca3af] mb-2">From Date</label>
-                    <input type="date" name="from_date" value="{{ request.args.get('from_date', '') }}" class="premium-input">
-                </div>
-
-                <div>
-                    <label class="block text-sm text-[#9ca3af] mb-2">To Date</label>
-                    <input type="date" name="to_date" value="{{ request.args.get('to_date', '') }}" class="premium-input">
-                </div>
-
-                <div>
-                    <label class="block text-sm text-[#9ca3af] mb-2">Category</label>
-                    <select name="category" class="premium-input premium-select">
-                        <option value="">All Categories</option>
-                        <option value="Food" {% if request.args.get('category') == 'Food' %}selected{% endif %}>Food</option>
-                        <option value="Travel" {% if request.args.get('category') == 'Travel' %}selected{% endif %}>Travel</option>
-                        <option value="Shopping" {% if request.args.get('category') == 'Shopping' %}selected{% endif %}>Shopping</option>
-                        <option value="Other" {% if request.args.get('category') == 'Other' %}selected{% endif %}>Other</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm text-[#9ca3af] mb-2">Source</label>
-                    <select name="source" class="premium-input premium-select">
-                        <option value="">All Sources</option>
-                        <option value="manual" {% if request.args.get('source') == 'manual' %}selected{% endif %}>Manual</option>
-                        <option value="voice" {% if request.args.get('source') == 'voice' %}selected{% endif %}>Voice</option>
-                        <option value="image" {% if request.args.get('source') == 'image' %}selected{% endif %}>Image Scan</option>
-                    </select>
-                </div>
-
-                <div class="flex items-end gap-3">
-                    <button type="submit" class="premium-primary-button w-full">Apply</button>
-                    <a href="{{ url_for('analysis') }}" class="premium-muted-button shrink-0 px-5">Reset</a>
-                </div>
-            </form>
         </section>
 
         <section class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-            <div class="premium-stat-card">
-                <p class="premium-stat-label">Filtered Spend</p>
-                <h3 class="premium-stat-value">₹ {{ summary.filtered_spend if summary else 0 }}</h3>
-            </div>
-            <div class="premium-stat-card">
-                <p class="premium-stat-label">Total Logs</p>
-                <h3 class="premium-stat-value">{{ summary.total_logs if summary else 0 }}</h3>
-            </div>
-            <div class="premium-stat-card">
-                <p class="premium-stat-label">Top Category</p>
-                <h3 class="premium-stat-value text-[1.2rem] sm:text-[1.4rem]">{{ summary.top_category if summary and summary.top_category else '—' }}</h3>
-            </div>
-            <div class="premium-stat-card">
-                <p class="premium-stat-label">Average Expense</p>
-                <h3 class="premium-stat-value">₹ {{ summary.avg_expense if summary else 0 }}</h3>
-            </div>
+            <div class="premium-stat-card"><p class="premium-stat-label">Tracked Spend</p><h3 class="premium-stat-value">₹ {{ summary.filtered_spend }}</h3></div>
+            <div class="premium-stat-card"><p class="premium-stat-label">Total Logs</p><h3 class="premium-stat-value">{{ summary.total_logs }}</h3></div>
+            <div class="premium-stat-card"><p class="premium-stat-label">Average Expense</p><h3 class="premium-stat-value">₹ {{ summary.avg_expense }}</h3></div>
+            <div class="premium-stat-card"><p class="premium-stat-label">Top Category</p><h3 class="premium-stat-value">{{ summary.top_category }}</h3></div>
+        </section>
+
+        <section id="filtersSection" class="premium-card rounded-[28px] p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Filters</h2><span class="premium-pill">Refine</span></div>
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3.5">
+                <input type="date" name="from_date" value="{{ request.args.get('from_date', '') }}" class="premium-input">
+                <input type="date" name="to_date" value="{{ request.args.get('to_date', '') }}" class="premium-input">
+                <select name="category" class="premium-input premium-select">
+                    <option value="">All categories</option>
+                    <option value="Food" {% if request.args.get('category') == 'Food' %}selected{% endif %}>Food</option>
+                    <option value="Travel" {% if request.args.get('category') == 'Travel' %}selected{% endif %}>Travel</option>
+                    <option value="Shopping" {% if request.args.get('category') == 'Shopping' %}selected{% endif %}>Shopping</option>
+                    <option value="Other" {% if request.args.get('category') == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+                <select name="source" class="premium-input premium-select">
+                    <option value="">All sources</option>
+                    <option value="manual" {% if request.args.get('source') == 'manual' %}selected{% endif %}>Manual</option>
+                    <option value="voice" {% if request.args.get('source') == 'voice' %}selected{% endif %}>Voice</option>
+                    <option value="image" {% if request.args.get('source') == 'image' %}selected{% endif %}>Image scan</option>
+                </select>
+                <div class="grid grid-cols-2 gap-3.5"><button class="premium-primary-button">Apply</button><a href="{{ url_for('analysis') }}" class="premium-secondary-button text-center">Reset</a></div>
+            </form>
         </section>
 
         <section class="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 lg:gap-6">
             <div class="xl:col-span-8 space-y-4 sm:space-y-5 lg:space-y-6">
                 <div class="premium-card rounded-[28px] p-5 sm:p-6">
-                    <div class="flex items-center justify-between mb-5">
-                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Spending Trend</h2>
-                        <div class="premium-badge">
-                            <i data-lucide="activity" class="w-3.5 h-3.5"></i>
-                            <span>Trend</span>
-                        </div>
-                    </div>
-                    <div class="h-[280px] sm:h-[340px]">
-                        <canvas id="trendChart"></canvas>
-                    </div>
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Daily Trend</h2><span class="premium-pill">Timeline</span></div>
+                    <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
                 </div>
-
                 <div class="premium-card rounded-[28px] p-5 sm:p-6">
-                    <div class="flex items-center justify-between mb-5">
-                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Category Breakdown</h2>
-                        <div class="premium-badge">
-                            <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
-                            <span>Split</span>
-                        </div>
-                    </div>
-                    <div class="h-[280px] sm:h-[340px]">
-                        <canvas id="categoryChart"></canvas>
-                    </div>
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Category Breakdown</h2><span class="premium-pill">Distribution</span></div>
+                    <div class="chart-wrap"><canvas id="categoryChart"></canvas></div>
                 </div>
             </div>
 
             <div class="xl:col-span-4 space-y-4 sm:space-y-5 lg:space-y-6">
                 <div class="premium-card rounded-[28px] p-5 sm:p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">AI Insight</h2>
-                        <div class="premium-badge">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                            <span>Coach</span>
-                        </div>
-                    </div>
-
-                    <div class="text-sm sm:text-[15px] text-[#d6dbe4] leading-8">
-                        {% if insights and insights|length > 0 %}
-                            {{ insights[0] }}
-                        {% else %}
-                            Filter your logs to generate a more focused spending insight.
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="premium-card rounded-[28px] p-5 sm:p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Quick Takeaways</h2>
-                    </div>
-
-                    <div class="space-y-3">
-                        <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4 text-sm text-[#d6dbe4]">
-                            Strongest spending category:
-                            <span class="text-white font-semibold">{{ summary.top_category if summary and summary.top_category else 'N/A' }}</span>
-                        </div>
-                        <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4 text-sm text-[#d6dbe4]">
-                            Total filtered transactions:
-                            <span class="text-white font-semibold">{{ summary.total_logs if summary else 0 }}</span>
-                        </div>
-                        <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4 text-sm text-[#d6dbe4]">
-                            Average spending per entry:
-                            <span class="text-white font-semibold">₹ {{ summary.avg_expense if summary else 0 }}</span>
-                        </div>
-                    </div>
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">AI Insights</h2><span class="premium-pill">Summary</span></div>
+                    <div class="space-y-3">{% for insight in insights %}<div class="premium-insight-box">{{ insight }}</div>{% endfor %}</div>
                 </div>
             </div>
         </section>
 
         <section id="logsSection" class="premium-card rounded-[28px] p-5 sm:p-6">
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Filtered Logs</h2>
-                <div class="premium-badge">
-                    <i data-lucide="database" class="w-3.5 h-3.5"></i>
-                    <span>{{ logs|length if logs else 0 }} entries</span>
+            <div class="flex items-center justify-between mb-4"><h2 class="text-xl sm:text-2xl font-semibold tracking-tight">Filtered Logs</h2><span class="premium-pill">{{ logs|length }}</span></div>
+            <div class="space-y-3">
+                {% for log in logs %}
+                <div class="premium-list-row flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div><p class="font-semibold text-white">₹ {{ log.amount }} • {{ log.category }}</p><p class="text-sm text-[#9ca3af]">{{ log.note or 'No note' }}</p></div>
+                    <div class="text-right"><p class="text-sm text-white">{{ log.log_date }}</p><p class="text-xs text-[#7f8a9d] uppercase">{{ log.source }}</p></div>
                 </div>
+                {% else %}
+                <div class="premium-empty-state">No logs match your selected filters.</div>
+                {% endfor %}
             </div>
-
-            {% if logs %}
-                <div class="hidden md:block overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="text-left text-[#98a2b3] border-b border-white/8">
-                                <th class="py-3 pr-4">Date</th>
-                                <th class="py-3 pr-4">Category</th>
-                                <th class="py-3 pr-4">Note</th>
-                                <th class="py-3 pr-4">Source</th>
-                                <th class="py-3 text-right">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for log in logs %}
-                            <tr class="border-b border-white/5">
-                                <td class="py-4 pr-4 text-white">{{ log.log_date }}</td>
-                                <td class="py-4 pr-4 text-[#d6dbe4]">{{ log.category }}</td>
-                                <td class="py-4 pr-4 text-[#d6dbe4]">{{ log.note or '—' }}</td>
-                                <td class="py-4 pr-4 text-[#9ca3af]">{{ log.source|title }}</td>
-                                <td class="py-4 text-right font-semibold text-white">₹ {{ log.amount }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="md:hidden space-y-3">
-                    {% for log in logs %}
-                    <div class="premium-log-card">
-                        <div class="min-w-0">
-                            <p class="font-semibold text-white">{{ log.note or 'Expense Log' }}</p>
-                            <p class="text-sm text-[#9ca3af] mt-1">{{ log.category }} · {{ log.log_date }}</p>
-                            <p class="text-xs text-[#7f8a9d] mt-2">Source: {{ log.source|title }}</p>
-                        </div>
-                        <div class="text-lg font-bold text-white">₹ {{ log.amount }}</div>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4 text-sm text-[#9ca3af]">
-                    No logs found for the selected filter combination.
-                </div>
-            {% endif %}
         </section>
     </div>
 </div>
 
 <script>
-const trendLabels = {{ trend_labels | tojson }};
-const trendValues = {{ trend_values | tojson }};
-const categoryLabels = {{ category_labels | tojson }};
-const categoryValues = {{ category_values | tojson }};
-
 const trendCtx = document.getElementById('trendChart');
 if (trendCtx) {
     new Chart(trendCtx, {
         type: 'line',
-        data: {
-            labels: trendLabels,
-            datasets: [{
-                label: 'Spending',
-                data: trendValues,
-                tension: 0.35,
-                fill: true,
-                borderColor: '#8b5cf6',
-                backgroundColor: 'rgba(139, 92, 246, 0.14)',
-                borderWidth: 3,
-                pointRadius: 3,
-                pointHoverRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { labels: { color: '#dbe2ea' } }
-            },
-            scales: {
-                x: {
-                    ticks: { color: '#94a3b8' },
-                    grid: { color: 'rgba(255,255,255,0.05)' }
-                },
-                y: {
-                    ticks: { color: '#94a3b8' },
-                    grid: { color: 'rgba(255,255,255,0.05)' }
-                }
-            }
-        }
+        data: { labels: {{ trend_labels|tojson }}, datasets: [{ label: 'Spend', data: {{ trend_values|tojson }}, borderWidth: 2, tension: 0.3 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 }
-
 const categoryCtx = document.getElementById('categoryChart');
 if (categoryCtx) {
     new Chart(categoryCtx, {
-        type: 'doughnut',
-        data: {
-            labels: categoryLabels,
-            datasets: [{
-                data: categoryValues,
-                backgroundColor: ['#8b5cf6', '#3b82f6', '#f59e0b', '#22c55e'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '68%',
-            plugins: {
-                legend: {
-                    labels: { color: '#dbe2ea' }
-                }
-            }
-        }
+        type: 'bar',
+        data: { labels: {{ category_labels|tojson }}, datasets: [{ label: 'Category Spend', data: {{ category_values|tojson }}, borderWidth: 1 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 }
-
 lucide.createIcons();
 </script>
 {% endblock %}
