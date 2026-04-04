@@ -209,19 +209,11 @@ def scan_expense_from_image(image_file):
     filename = (getattr(image_file, "filename", "") or "").strip()
     mime_type = getattr(image_file, "mimetype", None) or mimetypes.guess_type(filename)[0] or "image/jpeg"
 
-<<<<<<< HEAD
     try:
         image_bytes = image_file.read()
         if not image_bytes:
             raise RuntimeError("Uploaded image is empty.")
 
-=======
-    image_bytes = image_file.read()
-    if not image_bytes:
-        raise RuntimeError("Uploaded image is empty.")
-
-    try:
->>>>>>> f7cba8a (Add requests for Gemini image scan)
         parsed = _gemini_generate_from_image_bytes(image_bytes, mime_type)
 
         amount = _safe_float(parsed.get("amount"), 0)
@@ -233,11 +225,7 @@ def scan_expense_from_image(image_file):
             log_date = str(date.today())
 
         if amount <= 0:
-<<<<<<< HEAD
             amount = 100
-=======
-            amount = 0
->>>>>>> f7cba8a (Add requests for Gemini image scan)
 
         return {
             "amount": amount,
@@ -249,10 +237,6 @@ def scan_expense_from_image(image_file):
     except Exception as e:
         print("Gemini scan failed:", str(e))
 
-<<<<<<< HEAD
-=======
-        # Fallback so demo flow never breaks
->>>>>>> f7cba8a (Add requests for Gemini image scan)
         lowered = filename.lower()
 
         category = "Other"
@@ -268,8 +252,4 @@ def scan_expense_from_image(image_file):
             "category": category,
             "note": f"Scanned receipt ({filename or 'image'})",
             "log_date": str(date.today()),
-<<<<<<< HEAD
         }
-=======
-        }
->>>>>>> f7cba8a (Add requests for Gemini image scan)
